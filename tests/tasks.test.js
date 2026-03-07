@@ -5,57 +5,57 @@ let token;
 let taskId;
 
 beforeAll(async () => {
-  // Register
-  await request(app)
-    .post("/api/auth/register")
-    .send({
-      name: "Task User",
-      email: "task@example.com",
-      password: "123456"
-    });
+    // Register
+    await request(app)
+        .post("/api/auth/register")
+        .send({
+            name: "Task User",
+            email: "task@example.com",
+            password: "123456"
+        });
 
-  // Login
-  const res = await request(app)
-    .post("/api/auth/login")
-    .send({
-      email: "task@example.com",
-      password: "123456"
-    });
+    // Login
+    const res = await request(app)
+        .post("/api/auth/login")
+        .send({
+            email: "task@example.com",
+            password: "123456"
+        });
 
-  token = res.body.token;
+    token = res.body.token;
 });
 
 describe("Task Routes", () => {
 
-  it("should not allow access without token", async () => {
-    const res = await request(app)
-      .get("/api/tasks");
+    it("should not allow access without token", async () => {
+        const res = await request(app)
+            .get("/api/tasks");
 
-    expect(res.statusCode).toBe(401);
-  });
+        expect(res.statusCode).toBe(401);
+    });
 
-  it("should create a task", async () => {
-    const res = await request(app)
-      .post("/api/tasks")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        title: "Test Task",
-        description: "Testing"
-      });
+    it("should create a task", async () => {
+        const res = await request(app)
+            .post("/api/tasks")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                title: "Test Task",
+                description: "Testing"
+            });
 
-    expect(res.statusCode).toBe(201);
-    expect(res.body.title).toBe("Test Task");
+        expect(res.statusCode).toBe(201);
+        expect(res.body.title).toBe("Test Task");
 
-    taskId = res.body._id;
-  });
+        taskId = res.body._id;
+    });
 
-  it("should get user tasks only", async () => {
-    const res = await request(app)
-      .get("/api/tasks")
-      .set("Authorization", `Bearer ${token}`);
+    it("should get user tasks only", async () => {
+        const res = await request(app)
+            .get("/api/tasks")
+            .set("Authorization", `Bearer ${token}`);
 
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-  });
+        expect(res.statusCode).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+    });
 
 });
